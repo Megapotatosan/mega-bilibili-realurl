@@ -17,24 +17,30 @@ export default defineComponent({
     const isDark = usePreferredDark();
     const isDarkMode = useStorage('app-darkmode', isDark.value);
     const theme = computed(() => (isDarkMode.value ? darkTheme : lightTheme));
+
     return () => (
       <NConfigProvider theme={theme.value} inlineThemeDisabled>
         <NMessageProvider placement="bottom-right">
           <NNotificationProvider placement="bottom-right">
             <GitHubCorners href={pkg.homepage} target="_blank" />
-            <NLayout embedded class="h-screen">
-              <h1 class="text-center align-middle">
-                <img
-                  src="/favicon.png"
-                  alt="logo"
-                  class="h-30px mr-8px rounded-4px align-middle"
-                />
-                <span>屑站解析</span>
-              </h1>
+            <NLayout embedded class="app-shell">
+              <main class="app-main">
+                <header class="app-hero" aria-labelledby="app-title">
+                  <div class="brand-mark" aria-hidden="true">
+                    <img src="/favicon.png" alt="" />
+                  </div>
+                  <div class="hero-copy">
+                    <p class="eyebrow">Bilibili real URL</p>
+                    <h1 id="app-title">Bilibili 串流網址解析器</h1>
+                    <p>
+                      貼上影片、分集清單或直播間網址，快速產生可播放的
+                      MP4 或 M3U8 連結，方便在播放器或 VRChat 中使用。
+                    </p>
+                  </div>
+                </header>
 
-              <div class="max-w-800px my-0 mx-auto">
                 <Bilibili />
-              </div>
+              </main>
             </NLayout>
           </NNotificationProvider>
         </NMessageProvider>

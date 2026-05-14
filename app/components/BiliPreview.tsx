@@ -56,7 +56,7 @@ export default defineComponent<{
 function videoPreview(preview: string, poster_url?: string) {
   return (
     <video
-      class="w-full rounded-3px"
+      class="preview-media"
       controls
       loop
       crossorigin="anonymous"
@@ -72,20 +72,19 @@ function livePreview(
   poster_url?: string
 ) {
   return !show.value ? (
-    <div
-      class="w-full min-h-350px cursor-pointer"
+    <button
+      type="button"
+      class="live-preview-poster"
       onClick={() => (show.value = true)}
     >
-      <img src={poster_url} class="w-full rounded-3px" />
-      <div class="float-start">
-        <span class="absolute left-[calc(50%-35px)] top-[calc(50%+35px)]">
-          <div class="i-tabler-circle-caret-right w-70px h-70px"></div>
-        </span>
-      </div>
-    </div>
+      <img src={poster_url} alt="直播封面" />
+      <span class="preview-play-button" aria-hidden="true">
+        <span class="i-tabler-circle-caret-right"></span>
+      </span>
+    </button>
   ) : (
     <iframe
-      class="w-full min-h-400px border-0 rounded-3px"
+      class="preview-frame"
       src={hlsplayer_url}
       allowfullscreen
       sandbox="allow-scripts"

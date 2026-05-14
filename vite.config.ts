@@ -42,9 +42,10 @@ export default defineConfig({
       includeAssets: ['favicon.png'],
       workbox: { globPatterns: ['**/*.{js,css,html,ico,png,svg}'] },
       manifest: {
-        name: '屑站解析',
-        short_name: '屑站解析',
-        description: '让bilibili视频与直播在VRChat中播放更简单',
+        name: 'Bilibili 串流網址解析器',
+        short_name: 'Bilibili 解析器',
+        description:
+          '解析 Bilibili 影片與直播網址，產生可播放的 MP4 或 M3U8 串流連結。',
         theme_color: '#101014',
         background_color: '#101014',
         icons: [
