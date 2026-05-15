@@ -1,19 +1,23 @@
-export function req<T>(
-  u: string,
-  method = 'GET',
-  sessdata?: string
-): Promise<T> {
-  return new Promise((resolve, reject) => {
-    fetch(u, {
-      method,
-      headers:
-        sessdata && sessdata !== '' ? { Cookie: `SESSDATA=${sessdata}` } : {}
-    })
-      .then(resp => resp.json())
-      //@ts-ignore
-      .then(resolve)
-      .catch(reject);
-  });
+export async function req<T>(u: string, method = 'GET', sessdata?: string) {
+  const headers: Record<string, string> = {
+    Accept: 'application/json, text/plain, */*',
+    Referer: 'https://www.bilibili.com/',
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36'
+  };
+  if (sessdata && sessdata !== '') headers.Cookie = `SESSDATA=${sessdata}`;
+
+  const resp = await fetch(u, { method, headers });
+  const contentType = resp.headers.get('content-type') ?? '';
+  const text = await resp.text();
+
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      `Bilibili returned ${resp.status} ${resp.statusText || ''} as ${contentType || 'unknown content type'}`
+    );
+  }
+
+  return JSON.parse(text) as T;
 }
 
 // https://github.com/SocialSisterYi/bilibili-API-collect/blob/7b22c145d25f3ad725fce78c525254ebe60cf673/docs/misc/bvid_desc.md#javascripttypescript
