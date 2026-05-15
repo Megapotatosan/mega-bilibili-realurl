@@ -8,7 +8,6 @@ import {
 import { getSessdata } from '../config';
 import { vid2bv } from '../bilibili/utils';
 import { video_info, video_url } from '../bilibili/video';
-import { room_play_url } from '../bilibili/live';
 import { proxyBilibiliMedia } from '../bilibili/media-proxy';
 
 export default eventHandler(async event => {
@@ -36,14 +35,6 @@ export default eventHandler(async event => {
       const selectedPage = info.data.pages[page - 1];
       if (!selectedPage) return sendNoContent(event, 404);
       const url = await video_url(bvid, selectedPage.cid, sessdata);
-      return proxyBilibiliMedia(url, getRequestHeader(event, 'range'));
-    }
-    case 'm3u8': {
-      const room_id = parseInt(id);
-      if (Number.isNaN(room_id))
-        return send(event, { error: 'Invalid ID' }, 'application/json');
-      const url = await room_play_url(room_id, sessdata);
-      if (!url) return sendNoContent(event, 404);
       return proxyBilibiliMedia(url, getRequestHeader(event, 'range'));
     }
     default:

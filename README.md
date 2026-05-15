@@ -3,15 +3,14 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/gizmo-ds/bilibili-real-url/main)
 ![GitHub License](https://img.shields.io/github/license/gizmo-ds/bilibili-real-url?style=flat&label=License)
 
-Bilibili Real URL is a small web utility that resolves Bilibili video and live room pages into playable MP4 or M3U8 stream URLs. It is useful when you need a direct playback link for external players, automation, or VRChat video players.
+Bilibili Real URL is a small web utility that resolves Bilibili video pages into playable MP4 stream URLs. It is useful when you need a direct playback link for external players, automation, or VRChat video players.
 
-The app includes a Vue frontend and a Nitro server that proxies the Bilibili API calls needed to fetch video, page, live room, and stream metadata.
+The app includes a Vue frontend and a Nitro server that proxies the Bilibili API calls needed to fetch video, page, and stream metadata.
 
 ## Features
 
 - Parse Bilibili video URLs, including BV and AV identifiers.
 - Parse Bilibili list URLs and choose a specific page or episode.
-- Parse Bilibili live room URLs and return an M3U8 URL when the room is live.
 - Preview generated MP4 links in the browser.
 - Copy the generated playback URL with one click.
 - Deploy to Vercel, Deno Deploy, Cloudflare, or any Nitro-compatible host.
@@ -62,7 +61,7 @@ Create a `.env` file if you need authenticated Bilibili requests:
 SESSDATA=
 ```
 
-`SESSDATA` is optional for public videos and live rooms, but some region-limited, age-gated, or account-dependent content may require a valid Bilibili session cookie.
+`SESSDATA` is optional for public videos, but some region-limited, age-gated, or account-dependent content may require a valid Bilibili session cookie.
 For deployed Nitro servers, set `NITRO_SESSDATA` as a runtime secret so it is read from the request environment.
 
 ## Deployment

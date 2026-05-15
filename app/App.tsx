@@ -33,8 +33,8 @@ export default defineComponent({
                     <p class="eyebrow">Bilibili real URL</p>
                     <h1 id="app-title">Bilibili 串流網址解析器</h1>
                     <p>
-                      貼上影片、分集清單或直播間網址，快速產生可播放的
-                      MP4 或 M3U8 連結，方便在播放器或 VRChat 中使用。
+                      貼上影片或分集清單網址，快速產生可播放的 MP4
+                      連結，方便在播放器或 VRChat 中使用。
                     </p>
                   </div>
                 </header>

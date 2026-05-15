@@ -14,41 +14,6 @@ function isAllowedMediaUrl(url: URL) {
   );
 }
 
-function proxiedMediaPath(url: string) {
-  return `/__bili_media?url=${encodeURIComponent(url)}`;
-}
-
-function rewritePlaylistUri(uri: string, baseUrl: string) {
-  const resolved = new URL(uri, baseUrl);
-  return proxiedMediaPath(resolved.toString());
-}
-
-function rewritePlaylist(text: string, baseUrl: string) {
-  return text
-    .split('\n')
-    .map(line => {
-      const trimmed = line.trim();
-      if (trimmed === '') return line;
-
-      if (trimmed.startsWith('#')) {
-        return line.replace(/URI="([^"]+)"/g, (_, uri: string) => {
-          return `URI="${rewritePlaylistUri(uri, baseUrl)}"`;
-        });
-      }
-
-      return rewritePlaylistUri(trimmed, baseUrl);
-    })
-    .join('\n');
-}
-
-function isPlaylist(url: URL, contentType: string) {
-  return (
-    url.pathname.endsWith('.m3u8') ||
-    contentType.includes('mpegurl') ||
-    contentType.includes('application/vnd.apple.mpegurl')
-  );
-}
-
 export async function proxyBilibiliMedia(url: string, range?: string) {
   const upstreamUrl = new URL(url);
   if (!isAllowedMediaUrl(upstreamUrl)) {
@@ -63,24 +28,6 @@ export async function proxyBilibiliMedia(url: string, range?: string) {
   if (range) headers.Range = range;
 
   const upstream = await fetch(upstreamUrl, { headers });
-  const contentType = upstream.headers.get('content-type') ?? '';
-
-  if (isPlaylist(upstreamUrl, contentType)) {
-    const text = await upstream.text();
-    const responseHeaders = new Headers({
-      'Access-Control-Allow-Origin': '*',
-      'Cache-Control':
-        upstream.headers.get('cache-control') ?? 'no-store, max-age=0',
-      'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8'
-    });
-
-    return new Response(rewritePlaylist(text, upstreamUrl.toString()), {
-      status: upstream.status,
-      statusText: upstream.statusText,
-      headers: responseHeaders
-    });
-  }
-
   const responseHeaders = new Headers();
   for (const header of [
     'accept-ranges',
