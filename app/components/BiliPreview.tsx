@@ -87,7 +87,7 @@ function livePreview(
       class="preview-frame"
       src={hlsplayer_url}
       allowfullscreen
-      sandbox="allow-scripts"
+      sandbox="allow-scripts allow-same-origin"
       referrerpolicy="no-referrer"
     />
   );
