@@ -8,7 +8,10 @@ export default defineNitroConfig({
   alias: { '@': fileURLToPath(new URL('./', import.meta.url)) },
   cloudflare: {
     deployConfig: true,
-    nodeCompat: true
+    nodeCompat: true,
+    wrangler: {
+      name: 'mega-bilibili-realurl'
+    }
   },
   runtimeConfig: {
     sessdata: process.env.SESSDATA ?? ''
