@@ -3,5 +3,5 @@ import { appRouter } from '../../trpc/api-router';
 
 export default defineTRPCEventHandler({
   router: appRouter,
-  createContext: async _event => {}
+  createContext: async event => ({ event })
 });

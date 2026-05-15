@@ -5,7 +5,7 @@ import {
   sendNoContent,
   send
 } from 'h3';
-import { useRuntimeConfig } from 'nitropack/runtime';
+import { getSessdata } from '../config';
 import { vid2bv } from '../bilibili/utils';
 import { video_info, video_url } from '../bilibili/video';
 import { room_play_url } from '../bilibili/live';
@@ -21,7 +21,7 @@ export default eventHandler(async event => {
     return;
 
   const [id, ext] = event.context.params!.filename.split('.');
-  const { sessdata } = useRuntimeConfig(event);
+  const sessdata = getSessdata(event);
   const searchParams = new URL(event.node.req.url!, 'http://localhost')
     .searchParams;
   switch (ext) {

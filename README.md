@@ -63,7 +63,7 @@ SESSDATA=
 ```
 
 `SESSDATA` is optional for public videos and live rooms, but some region-limited, age-gated, or account-dependent content may require a valid Bilibili session cookie.
-For deployed Nitro servers, set `NITRO_SESSDATA` so it overrides the runtime config value.
+For deployed Nitro servers, set `NITRO_SESSDATA` as a runtime secret so it is read from the request environment.
 
 ## Deployment
 
