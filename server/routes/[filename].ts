@@ -1,6 +1,7 @@
 import {
   eventHandler,
   handleCors,
+  getRequestHeader,
   sendRedirect,
   sendNoContent,
   send
@@ -9,6 +10,43 @@ import { getSessdata } from '../config';
 import { vid2bv } from '../bilibili/utils';
 import { video_info, video_url } from '../bilibili/video';
 import { room_play_url } from '../bilibili/live';
+
+const BROWSER_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
+
+async function proxyMedia(url: string, range?: string) {
+  const headers: Record<string, string> = {
+    Accept: '*/*',
+    Referer: 'https://www.bilibili.com/',
+    'User-Agent': BROWSER_UA
+  };
+  if (range) headers.Range = range;
+
+  const upstream = await fetch(url, { headers });
+  const responseHeaders = new Headers();
+
+  for (const header of [
+    'accept-ranges',
+    'cache-control',
+    'content-length',
+    'content-range',
+    'content-type',
+    'etag',
+    'last-modified'
+  ]) {
+    const value = upstream.headers.get(header);
+    if (value) responseHeaders.set(header, value);
+  }
+
+  responseHeaders.set('Access-Control-Allow-Origin', '*');
+  responseHeaders.set('Cross-Origin-Resource-Policy', 'cross-origin');
+
+  return new Response(upstream.body, {
+    status: upstream.status,
+    statusText: upstream.statusText,
+    headers: responseHeaders
+  });
+}
 
 export default eventHandler(async event => {
   if (
@@ -35,7 +73,7 @@ export default eventHandler(async event => {
       const selectedPage = info.data.pages[page - 1];
       if (!selectedPage) return sendNoContent(event, 404);
       const url = await video_url(bvid, selectedPage.cid, sessdata);
-      return sendRedirect(event, url, 302);
+      return proxyMedia(url, getRequestHeader(event, 'range'));
     }
     case 'm3u8': {
       const room_id = parseInt(id);
