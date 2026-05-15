@@ -64,6 +64,14 @@ function parse_video(u: URL) {
     /av[0-9]+/gi.exec(u.pathname)?.[0] ??
     /bv\w+/gi.exec(u.pathname)?.[0] ??
     '';
+  if (id.value === '') {
+    return notification.error({
+      title: '無法解析影片 ID',
+      content: '請確認網址中包含有效的 BV 或 AV 編號。',
+      duration: 5000,
+      meta: _url
+    });
+  }
   loading.value = true;
   trpc.getVideoInfo
     .query({ id: id.value })
@@ -77,21 +85,27 @@ function parse_video(u: URL) {
           meta: _url
         });
 
-      videoInfo.value = result.data;
-      page.value = p;
-
       pages.value = result.data.pages.map((item: any, index: number) => ({
         label: () =>
           h('span', {}, { default: () => `P${index + 1} ${item.part}` }),
         value: index + 1
       }));
 
-      if (p > result.data.pages.length) return;
-      if (p === page.value) {
-        const query = new URLSearchParams();
-        if (p > 1) query.set('p', p.toString());
-        set_preview(`/${id.value}.mp4`, query);
-      }
+      if (pages.value.length === 0)
+        return notification.error({
+          title: '影片資訊讀取失敗',
+          content: '這個影片沒有可解析的分集資訊。',
+          duration: 5000,
+          meta: _url
+        });
+
+      const selectedPage = Math.min(Math.max(p, 1), pages.value.length);
+      videoInfo.value = result.data;
+      page.value = selectedPage;
+
+      const query = new URLSearchParams();
+      if (selectedPage > 1) query.set('p', selectedPage.toString());
+      set_preview(`/${id.value}.mp4`, query);
     });
 }
 

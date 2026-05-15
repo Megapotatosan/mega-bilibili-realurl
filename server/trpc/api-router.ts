@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { video_info } from '../bilibili/video';
 import { vid2bv } from '../bilibili/utils';
 import { room_info } from '../bilibili/live';
+import { useRuntimeConfig } from 'nitropack/runtime';
 
 export const appRouter = router({
   getVideoInfo: publicProcedure
@@ -13,12 +14,14 @@ export const appRouter = router({
     )
     .query(async opts => {
       const { input } = opts;
+      const { sessdata } = useRuntimeConfig();
       const bvid = vid2bv(input.id);
-      return video_info(bvid);
+      return video_info(bvid, sessdata);
     }),
   getRoomInfo: publicProcedure.input(z.number()).query(async opts => {
     const { input } = opts;
-    return room_info(input);
+    const { sessdata } = useRuntimeConfig();
+    return room_info(input, sessdata);
   })
 });
 

@@ -5,6 +5,7 @@ import {
   sendNoContent,
   send
 } from 'h3';
+import { useRuntimeConfig } from 'nitropack/runtime';
 import { vid2bv } from '../bilibili/utils';
 import { video_info, video_url } from '../bilibili/video';
 import { room_play_url } from '../bilibili/live';
@@ -20,6 +21,7 @@ export default eventHandler(async event => {
     return;
 
   const [id, ext] = event.context.params!.filename.split('.');
+  const { sessdata } = useRuntimeConfig(event);
   const searchParams = new URL(event.node.req.url!, 'http://localhost')
     .searchParams;
   switch (ext) {
@@ -27,15 +29,20 @@ export default eventHandler(async event => {
       const bvid = vid2bv(id);
       let page = parseInt(searchParams.get('p') ?? '1');
       if (Number.isNaN(page) || page < 1) page = 1;
-      const info = await video_info(bvid);
-      const url = await video_url(bvid, info.data.pages[page - 1].cid);
+      const info = await video_info(bvid, sessdata);
+      if (info.code !== 0)
+        return send(event, { error: info.message }, 'application/json');
+      const selectedPage = info.data.pages[page - 1];
+      if (!selectedPage) return sendNoContent(event, 404);
+      const url = await video_url(bvid, selectedPage.cid, sessdata);
       return sendRedirect(event, url, 302);
     }
     case 'm3u8': {
       const room_id = parseInt(id);
       if (Number.isNaN(room_id))
         return send(event, { error: 'Invalid ID' }, 'application/json');
-      const url = await room_play_url(room_id);
+      const url = await room_play_url(room_id, sessdata);
+      if (!url) return sendNoContent(event, 404);
       return sendRedirect(event, url, 302);
     }
     default:
