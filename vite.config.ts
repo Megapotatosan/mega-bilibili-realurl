@@ -5,7 +5,6 @@ import UnoCSS from 'unocss/vite';
 import { setup } from '@css-render/vue3-ssr';
 import type { ViteSSGOptions } from 'vite-ssg/single-page';
 import svgLoader from 'vite-svg-loader';
-import { VitePWA } from 'vite-plugin-pwa';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 
 export default defineConfig({
@@ -36,24 +35,7 @@ export default defineConfig({
     vue(),
     UnoCSS(),
     svgLoader(),
-    vueJsx(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.png'],
-      workbox: { globPatterns: ['**/*.{js,css,html,ico,png,svg}'] },
-      manifest: {
-        name: 'Bilibili 串流網址解析器',
-        short_name: 'Bilibili 解析器',
-        description:
-          '解析 Bilibili 影片與直播網址，產生可播放的 MP4 或 M3U8 串流連結。',
-        theme_color: '#101014',
-        background_color: '#101014',
-        icons: [
-          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' }
-        ]
-      }
-    })
+    vueJsx()
   ],
   build: {
     outDir: fileURLToPath(new URL('./server/public', import.meta.url)),
