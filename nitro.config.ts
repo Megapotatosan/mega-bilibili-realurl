@@ -1,9 +1,11 @@
 import { fileURLToPath, URL } from 'node:url';
 import { defineNitroConfig } from 'nitropack/config';
 
+const preset = process.env.NITRO_PRESET ?? 'cloudflare_module';
+
 export default defineNitroConfig({
   compatibilityDate: '2025-04-24',
-  preset: 'cloudflare_module',
+  preset,
   srcDir: 'server',
   alias: { '@': fileURLToPath(new URL('./', import.meta.url)) },
   cloudflare: {
