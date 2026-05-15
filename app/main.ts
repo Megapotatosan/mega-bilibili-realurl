@@ -4,7 +4,11 @@ import 'vfonts/Lato.css';
 import './style.scss';
 import App from './App';
 
-if ('serviceWorker' in navigator) {
+if (
+  typeof navigator !== 'undefined' &&
+  'serviceWorker' in navigator &&
+  typeof caches !== 'undefined'
+) {
   navigator.serviceWorker
     .getRegistrations()
     .then(registrations =>
