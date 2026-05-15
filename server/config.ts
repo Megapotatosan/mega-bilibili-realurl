@@ -10,7 +10,7 @@ type CloudflareRuntime = {
 
 export function getSessdata(event?: H3Event) {
   const runtimeConfig = useRuntimeConfig(event);
-  const cloudflare = event?.node.req.runtime?.cloudflare as
+  const cloudflare = event?.context.cloudflare as
     | CloudflareRuntime
     | undefined;
 
